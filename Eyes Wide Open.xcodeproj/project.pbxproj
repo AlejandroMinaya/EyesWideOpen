@@ -51,6 +51,7 @@
 		BE416F6526544BCC00A68EE8 /* Eyes Wide Open */ = {
 			isa = PBXGroup;
 			children = (
+				BEF9D4F4265452BF00C650BF /* Custom Views */,
 				BE416F6626544BCC00A68EE8 /* AppDelegate.swift */,
 				BE416F6826544BD000A68EE8 /* Assets.xcassets */,
 				BE416F6A26544BD000A68EE8 /* MainMenu.xib */,
@@ -58,6 +59,13 @@
 				BE416F6E26544BD000A68EE8 /* Eyes_Wide_Open.entitlements */,
 			);
 			path = "Eyes Wide Open";
+			sourceTree = "<group>";
+		};
+		BEF9D4F4265452BF00C650BF /* Custom Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Custom Views";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,7 +285,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "alejandrominaya.Eyes-Wide-Open";
+				PRODUCT_BUNDLE_IDENTIFIER = "alejandrominaya.eyes-wide-open";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -298,7 +306,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "alejandrominaya.Eyes-Wide-Open";
+				PRODUCT_BUNDLE_IDENTIFIER = "alejandrominaya.eyes-wide-open";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
