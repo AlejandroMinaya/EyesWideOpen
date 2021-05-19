@@ -20,18 +20,17 @@ class CameraController: NSViewController {
     
     public func plugCamera() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized:
-            self.setupCamera()
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { granted in
-                if granted {
-                    self.setupCamera()
+            case .authorized:
+                self.setupCamera()
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: .video) { granted in
+                    if granted {
+                        self.setupCamera()
+                    }
                 }
-            }
-        default:
-            return
+            default:
+                return
         }
-        
     }
     
     private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
@@ -40,15 +39,26 @@ class CameraController: NSViewController {
         return preview
     }()
     
-    public func addPreviewLayer() {
-        self.view.layer?.addSublayer(self.previewLayer)
+    private func addPreviewLayer() {
+        self.view.layer = CALayer()
+        self.view.wantsLayer = true
+        self.view.layer!.addSublayer(self.previewLayer)
     }
-    
+    public func turnOff () {
+        self.captureSession.stopRunning()
+    }
+    override func viewWillLayout() {
+        super.viewWillLayout()
+        self.previewLayer.frame = self.view.bounds
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.plugCamera()
         self.addPreviewLayer()
         self.captureSession.startRunning()
+    }
+    override func viewWillDisappear() {
+        self.turnOff()
     }
 }
 

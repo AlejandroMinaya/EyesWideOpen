@@ -11,7 +11,7 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet var window: NSWindow!
-    private var filePath: String!
+    @IBOutlet var camera: CameraController!
     
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {

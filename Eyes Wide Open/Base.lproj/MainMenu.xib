@@ -14,6 +14,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Eyes_Wide_Open" customModuleProvider="target">
             <connections>
+                <outlet property="camera" destination="hqs-VF-6HF" id="f5t-O2-jRz"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -680,11 +681,6 @@
             </items>
             <point key="canvasLocation" x="-27" y="132"/>
         </menu>
-        <viewController id="hqs-VF-6HF" customClass="CameraController" customModule="Eyes_Wide_Open" customModuleProvider="target">
-            <connections>
-                <outlet property="view" destination="zj2-x7-aRq" id="qPD-W2-FSj"/>
-            </connections>
-        </viewController>
         <window title="Eyes Wide Open" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -693,15 +689,13 @@
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
                 <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zj2-x7-aRq">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="dyo-Xe-LBE"/>
-                    </imageView>
-                </subviews>
             </view>
             <point key="canvasLocation" x="-27" y="-145"/>
         </window>
+        <viewController id="hqs-VF-6HF" customClass="CameraController" customModule="Eyes_Wide_Open" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="EiT-Mj-1SZ" id="2ZQ-8I-KaE"/>
+            </connections>
+        </viewController>
     </objects>
 </document>
