@@ -8,14 +8,32 @@
 import AVFoundation
 import Cocoa
 
-class CameraController: NSViewController {
+class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var captureSession = AVCaptureSession()
+    private var videoOutput = AVCaptureVideoDataOutput()
 
     
     private func setupCamera() {
         let device = AVCaptureDevice.default(for: .video)!
         let cameraInput = try!AVCaptureDeviceInput(device: device)
         self.captureSession.addInput(cameraInput)
+    }
+    
+    private func setupVideoOutput() {
+        self.videoOutput.videoSettings = [
+            (kCVPixelBufferPixelFormatTypeKey as NSString): NSNumber(value: kCVPixelFormatType_32RGBA)
+        ] as [String: Any]
+        self.videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "ewo.image.handling.queue"))
+        self.captureSession.addOutput(self.videoOutput)
+    }
+    
+    public func handleVideoOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection, callback: (CVImageBuffer) -> Void) {
+        guard let frame = CMSampleBufferGetImageBuffer(sampleBuffer)
+        else {
+            debugPrint("Couldn't retrieve buffer image")
+            return
+        }
+        callback(frame)
     }
     
     public func plugCamera() {
@@ -55,6 +73,7 @@ class CameraController: NSViewController {
         super.viewDidLoad()
         self.plugCamera()
         self.addPreviewLayer()
+        self.setupVideoOutput()
         self.captureSession.startRunning()
     }
     override func viewWillDisappear() {
