@@ -689,12 +689,25 @@
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="641" height="420"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqy-f8-9U8">
+                        <rect key="frame" x="0.0" y="0.0" width="318" height="420"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="J6d-lB-gLc"/>
+                    </imageView>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nST-Fd-l1o">
+                        <rect key="frame" x="318" y="0.0" width="323" height="420"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" heightSizable="YES"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="kEs-93-r10"/>
+                    </imageView>
+                </subviews>
             </view>
-            <point key="canvasLocation" x="-25.5" y="-182"/>
+            <point key="canvasLocation" x="-12.5" y="-139"/>
         </window>
         <viewController id="hqs-VF-6HF" customClass="CameraController" customModule="Eyes_Wide_Open" customModuleProvider="target">
             <connections>
-                <outlet property="view" destination="EiT-Mj-1SZ" id="2ZQ-8I-KaE"/>
+                <outlet property="resultView" destination="nST-Fd-l1o" id="qzV-RD-Uh1"/>
+                <outlet property="view" destination="gqy-f8-9U8" id="4fO-Ec-ygr"/>
             </connections>
         </viewController>
     </objects>

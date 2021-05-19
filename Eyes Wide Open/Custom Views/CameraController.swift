@@ -12,6 +12,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     private var captureSession = AVCaptureSession()
     private var videoOutput = AVCaptureVideoDataOutput()
     private var videoFormat = kCVPixelFormatType_32BGRA
+    @IBOutlet var resultView: NSImageView!
     
     // Variable to determine if the image processing is performed using the GPU or the CPU
     private var _useGpu = false
@@ -22,6 +23,10 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         set {
             _useGpu = newValue
         }
+    }
+    private var _resultImage = NSImage()
+    var resultImage: NSImage {
+        _resultImage
     }
     
     // Structure to store the pixel information from the video capture
@@ -50,6 +55,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     private func handleFrame(frame: CVImageBuffer) {
         // Lock the memory address for the buffer
         CVPixelBufferLockBaseAddress(frame, CVPixelBufferLockFlags(rawValue: 0))
+        defer { CVPixelBufferUnlockBaseAddress(frame, CVPixelBufferLockFlags(rawValue: 0)) }
         let bytesPerRow = CVPixelBufferGetBytesPerRow(frame)
         // Retrive the buffer dimension
         let width = CVPixelBufferGetWidth(frame)
@@ -58,27 +64,53 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         // Get the pixel size in bytes
         let pxlsz = bytesPerRow/width;
         
-        // Get the first pixel
         let pixel_raw_ptr = CVPixelBufferGetBaseAddress(frame)!
         let pixel_buf_ptr = UnsafeRawBufferPointer(start: pixel_raw_ptr, count: width * height * pxlsz)
         
+        // Create pointer to result buffer
+        let res_ptr = UnsafeMutableRawPointer.allocate(
+            byteCount: width * height * pxlsz,
+            alignment: MemoryLayout<UInt8>.alignment
+        )
+        defer { res_ptr.deallocate() }
+        
+        // Navigate pixel buffer
         var pixel_pos = 0
-        for (_, value) in pixel_buf_ptr.enumerated() {
-            switch (pixel_pos) {
-            case 0:
-                debugPrint("Blue: \(value)")
-            case 1:
-                debugPrint("Green: \(value)")
-            case 2:
-                debugPrint("Red: \(value)")
-            case 3:
-                debugPrint("Alpha: \(value)")
-            default:
-                debugPrint("Unknown position")
-            }
+        for (index, value) in pixel_buf_ptr.enumerated() {
+            res_ptr.storeBytes(of: value, toByteOffset: index, as: UInt8.self)
             pixel_pos = (pixel_pos + 1) % 4
         }
         
+        // Create new image from transformed buffer
+        let transformed_buff_ptr = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
+        defer { transformed_buff_ptr.deallocate() }
+        
+        CVPixelBufferCreateWithBytes(
+            nil,
+            width,
+            height,
+            videoFormat,
+            res_ptr,
+            bytesPerRow,
+            { baseAddr, refCon  in
+                guard let baseAddress = baseAddr else { return }
+                free(UnsafeMutableRawPointer(mutating: baseAddress))
+            },
+            nil,
+            nil,
+            transformed_buff_ptr
+        )
+        // Convert the buffer into a displayable image
+        let newFrame = CIImage(cvPixelBuffer: transformed_buff_ptr.pointee!)
+        let context = CIContext(options: nil)
+        let cgImage = context.createCGImage(
+            newFrame,
+            from: CGRect(x: 0, y: 0, width: width, height: height)
+        )!
+        _resultImage = NSImage(
+            cgImage: cgImage,
+            size: CGSize(width: width, height: height)
+        )
         
     }
     
@@ -118,12 +150,16 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         self.view.wantsLayer = true
         self.view.layer!.addSublayer(self.previewLayer)
     }
+    public func setResult () {
+        self.resultView.image = self._resultImage
+    }
     public func turnOff () {
         self.captureSession.stopRunning()
     }
     override func viewWillLayout() {
         super.viewWillLayout()
         self.previewLayer.frame = self.view.bounds
+        
     }
     override func viewDidLoad() {
         super.viewDidLoad()
