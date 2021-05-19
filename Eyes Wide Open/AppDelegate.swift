@@ -12,11 +12,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet var window: NSWindow!
     @IBOutlet var camera: CameraController!
+
     
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
-        
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
