@@ -11,14 +11,13 @@ import Cocoa
 class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     // MARK: Class Parameters & Constants
     private let ANIM_KEY = "contents"
-    private let CAMERA_FPS = 30;
+    private let CAMERA_FPS = 1;
     
     private var frame_counter = 0
     private var captureSession = AVCaptureSession()
     private var videoOutput = AVCaptureVideoDataOutput()
     private var videoFormat = kCVPixelFormatType_32BGRA
     @IBOutlet var resultView: NSImageView!
-    private var resultLayer = CALayer()
     
     // Variable to determine if the image processing is performed using the GPU or the CPU
     private var _useGpu = false
@@ -51,18 +50,11 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         self.captureSession.addOutput(self.videoOutput)
     }
     
-    private func setupResultView() {
-        self.resultView.layer = CALayer()
-        self.resultView.wantsLayer = true
-        self.resultView.layer!.addSublayer(self.resultLayer)
-    }
-    
     
     // MARK: View Lifecycle Methods
     override func viewWillLayout() {
         super.viewWillLayout()
         self.previewLayer.frame = self.view.bounds
-        self.resultLayer.frame = self.resultView.bounds
     }
     
     override func viewDidLoad() {
@@ -70,7 +62,6 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         self.plugCamera()
         self.addPreviewLayer()
         self.setupVideoOutput()
-        //self.setupResultView()
         self.captureSession.startRunning()
     }
     override func viewWillDisappear() {
@@ -115,27 +106,12 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             debugPrint("Couldn't retrieve buffer image")
             return
         }
-        if (frame_counter == 30) {
+        if (frame_counter == self.CAMERA_FPS) {
             frame_counter = 0
             self.handleFrame(frame: frame)
         } else {
             frame_counter += 1
         }
-    }
-    
-    private func bindImageToResultAnim(image: NSImage) {
-        
-        let keyFrameAnimation = CAKeyframeAnimation(keyPath: self.ANIM_KEY)
-        keyFrameAnimation.values = [image]
-        keyFrameAnimation.calculationMode = .discrete
-        keyFrameAnimation.fillMode = .forwards
-        keyFrameAnimation.duration = 0.01
-        keyFrameAnimation.repeatCount = Float.infinity
-        keyFrameAnimation.isRemovedOnCompletion = true
-        keyFrameAnimation.beginTime = 0.0
-        
-        self.resultLayer.add(keyFrameAnimation, forKey: self.ANIM_KEY)
-        
     }
     
     private func handleFrame(frame: CVImageBuffer) {
