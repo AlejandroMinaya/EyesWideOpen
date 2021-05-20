@@ -9,19 +9,16 @@
 using namespace metal;
 
 kernel void inverse(
-    device const int *src_buffer,
-    device int *dest_buffer,
-    uint index [[thread_position_in_grid]]
+    device const unsigned int *src_buffer,
+    device unsigned int *dest_buffer,
+    device const unsigned int *N,
+    uint index [[thread_position_in_grid]],
+    uint grid_sz [[threads_per_grid]]
 ) {
-    // Alpha values are ONLY multiples of 3, so we check that case
-    if (
-        index % 3 == 0
-        && index % 2 > 0
-        && index % 5 > 0 // We use 5 because we cannot use 0 for this purpose
-     ) {
-        dest_buffer[index] = src_buffer[index];
-    } else {
-        dest_buffer[index] = ~src_buffer[index];
+    uint id = index;
+    while (id < *N) {
+        dest_buffer[id] = src_buffer[id];
+        id += grid_sz;
     }
 }
 

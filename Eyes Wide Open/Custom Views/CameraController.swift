@@ -21,7 +21,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     @IBOutlet var resultView: NSImageView!
     
     // Variable to determine if the image processing is performed using the GPU or the CPU
-    private var _useGpu = false
+    private var _useGpu = true
     public var useGpu: Bool {
         get {
             _useGpu
@@ -35,6 +35,15 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         _resultImage
     }
 
+    // MARK: Metal Functions Lazy Declarations
+    private lazy var metalInverse: MetalSIFunction = {
+        let mtlinv = MetalSIFunction(
+            functionName: "inverse",
+            gridWidth: 1024,
+            blockWidth: 1024
+        )
+        return mtlinv
+    }()
     
     // MARK: Setup Methods
     private func setupCamera() {
@@ -139,24 +148,33 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         let height = CVPixelBufferGetHeight(frame)
         
         // Get the pixel size in bytes
-        let pxlsz = bytesPerRow/width;
+        let pxlsz = bytesPerRow/width
+        
+        // Calculate the total amount of bytes
+        let totalBytes = width * height * pxlsz
         
         // Retrieve pointers to pixel buffer
         let pixel_raw_ptr = CVPixelBufferGetBaseAddress(frame)!
-        let pixel_buf_ptr = UnsafeRawBufferPointer(start: pixel_raw_ptr, count: width * height * pxlsz)
+        let pixel_buf_ptr = UnsafeMutableRawBufferPointer(start: pixel_raw_ptr, count: totalBytes)
         
         // Create pointer to result buffer
-        let res_ptr = UnsafeMutableRawPointer.allocate(
-            byteCount: width * height * pxlsz,
-            alignment: MemoryLayout<UInt8>.alignment
-        )
-        defer { res_ptr.deallocate() }
+        var res_ptr: UnsafeMutableRawPointer!
         
         if (!_useGpu) {
             // Process pixel buffer
+            res_ptr = UnsafeMutableRawPointer.allocate(
+                byteCount: totalBytes,
+                alignment: MemoryLayout<UInt8>.alignment
+            )
+            defer { res_ptr.deallocate() }
             inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
-        } else {
             
+        } else {
+            res_ptr = metalInverse.run(
+                src_ptr: pixel_buf_ptr.baseAddress!,
+                src_sz: totalBytes,
+                problem_sz: totalBytes
+            )!
         }
         
         // Create modified pixel buffer from bytes

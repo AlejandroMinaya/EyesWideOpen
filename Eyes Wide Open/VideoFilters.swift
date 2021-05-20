@@ -7,7 +7,7 @@
 
 import Cocoa
 
-func inverseBGRA(src_ptr: UnsafeRawBufferPointer, dst_ptr: UnsafeMutableRawPointer) {
+func inverseBGRA(src_ptr: UnsafeMutableRawBufferPointer, dst_ptr: UnsafeMutableRawPointer) {
     var pixel_pos = 0
     for (index, value) in src_ptr.enumerated() {
         if (pixel_pos == 3) {

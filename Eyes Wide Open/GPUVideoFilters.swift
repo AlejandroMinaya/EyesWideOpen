@@ -14,7 +14,7 @@ private let THREADS_PER_BLK = device?.maxThreadsPerThreadgroup
 private var defaultLibrary = device?.makeDefaultLibrary()
 private var error = NSError()
 
-class MetalFunction {
+class MetalSIFunction {
     private var _function: MTLFunction?
     private var _pipeline: MTLComputePipelineState?
     
@@ -51,11 +51,9 @@ class MetalFunction {
     }
     
     public func run(
-        threadGridWidth: Int,
-        threadGridHeight: Int,
-        threadGridDepth: Int,
         src_ptr: UnsafeMutableRawPointer,
-        src_sz: Int
+        src_sz: Int,
+        problem_sz: Int
     ) -> UnsafeMutableRawPointer? {
         let commandQueue = device?.makeCommandQueue()
         let commandBuffer = commandQueue?.makeCommandBuffer()
@@ -63,10 +61,20 @@ class MetalFunction {
         
         let src = device?.makeBuffer(bytes: src_ptr, length: src_sz, options: .storageModeManaged)
         let dst = device?.makeBuffer(length: src_sz, options: .storageModeManaged)
+        let N_ptr = UnsafeMutableRawPointer.allocate(
+            byteCount: MemoryLayout<Int>.size,
+            alignment: MemoryLayout<Int>.alignment
+        )
+        N_ptr.storeBytes(of: problem_sz, as: Int.self)
+        let N = device?.makeBuffer(
+            bytes: N_ptr, length: MemoryLayout<Int>.size, options: .storageModeManaged
+        )
+        N_ptr.deallocate()
         
         commandEncoder?.setComputePipelineState(self._pipeline!)
         commandEncoder?.setBuffer(src, offset: 0, index: 0)
-        commandEncoder?.setBuffer(dst, offset: 0, index: 0)
+        commandEncoder?.setBuffer(dst, offset: 0, index: 1)
+        commandEncoder?.setBuffer(N, offset: 0, index: 2)
         
         let gridSize = MTLSizeMake(_gridWidth, _gridHeight, _gridDepth)
         let blockSize = MTLSizeMake(_blockWidth, _blockHeight, _blockDepth)
