@@ -152,9 +152,12 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         )
         defer { res_ptr.deallocate() }
         
-        // Process pixel buffer
-        inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
-        
+        if (!_useGpu) {
+            // Process pixel buffer
+            inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
+        } else {
+            
+        }
         
         // Create modified pixel buffer from bytes
         CVPixelBufferCreateWithBytes(
