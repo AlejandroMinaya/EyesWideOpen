@@ -11,7 +11,7 @@ import Cocoa
 class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     // MARK: Class Parameters & Constants
     private let ANIM_KEY = "contents"
-    private let CAMERA_FPS = 1;
+    private let CAMERA_FPS = 60;
     
     private var frame_counter = 0
     private var captureSession = AVCaptureSession()
@@ -139,11 +139,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         defer { res_ptr.deallocate() }
         
         // Process pixel buffer
-        var pixel_pos = 0
-        for (index, value) in pixel_buf_ptr.enumerated() {
-            res_ptr.storeBytes(of: value, toByteOffset: index, as: UInt8.self)
-            pixel_pos = (pixel_pos + 1) % 4
-        }
+        inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
         
         // Create pointer for the modified pixel buffer
         let transformed_buff_ptr = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
