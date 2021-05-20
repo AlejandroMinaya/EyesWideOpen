@@ -50,6 +50,13 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         self.captureSession.addOutput(self.videoOutput)
     }
     
+    private func setupResultView() {
+        let layer = CALayer()
+        layer.frame = self.resultView.bounds
+        layer.contentsGravity = .center
+        self.resultView.layer = layer
+        self.resultView.wantsLayer = true
+    }
     
     // MARK: View Lifecycle Methods
     override func viewWillLayout() {
@@ -62,6 +69,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         self.plugCamera()
         self.addPreviewLayer()
         self.setupVideoOutput()
+        self.setupResultView()
         self.captureSession.startRunning()
     }
     override func viewWillDisappear() {
@@ -100,18 +108,23 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     }
     
     // MARK: Video Capture Methods
+    private func loadResultImg(image: NSImage){
+        let animation = CABasicAnimation(keyPath: self.ANIM_KEY)
+        animation.duration = 0.25
+        animation.fromValue = self.resultView.layer!.contents
+        animation.toValue = image
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        self.resultView.layer!.add(animation, forKey: self.ANIM_KEY)
+    }
+    
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let frame = CMSampleBufferGetImageBuffer(sampleBuffer)
         else {
             debugPrint("Couldn't retrieve buffer image")
             return
         }
-        if (frame_counter == self.CAMERA_FPS) {
-            frame_counter = 0
-            self.handleFrame(frame: frame)
-        } else {
-            frame_counter += 1
-        }
+        self.handleFrame(frame: frame)
     }
     
     private func handleFrame(frame: CVImageBuffer) {
@@ -176,7 +189,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             size: CGSize(width: width, height: height)
         )
         DispatchQueue.main.async {
-            self.resultView.image = self._resultImage
+            self.loadResultImg(image: self._resultImage)
         }
         
     }
