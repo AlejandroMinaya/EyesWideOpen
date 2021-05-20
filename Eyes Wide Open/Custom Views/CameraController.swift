@@ -17,6 +17,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     private var captureSession = AVCaptureSession()
     private var videoOutput = AVCaptureVideoDataOutput()
     private var videoFormat = kCVPixelFormatType_32BGRA
+    private var resultImageBuffer = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
     @IBOutlet var resultView: NSImageView!
     
     // Variable to determine if the image processing is performed using the GPU or the CPU
@@ -154,9 +155,6 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         // Process pixel buffer
         inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
         
-        // Create pointer for the modified pixel buffer
-        let transformed_buff_ptr = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
-        defer { transformed_buff_ptr.deallocate() }
         
         // Create modified pixel buffer from bytes
         CVPixelBufferCreateWithBytes(
@@ -169,14 +167,16 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             { baseAddr, refCon  in
                 guard let baseAddress = baseAddr else { return }
                 free(UnsafeMutableRawPointer(mutating: baseAddress))
+                guard let ref = refCon else { return }
+                free(UnsafeMutableRawPointer(mutating: ref))
             },
+            resultImageBuffer,
             nil,
-            nil,
-            transformed_buff_ptr
+            resultImageBuffer
         )
         
         // Convert the buffer into a displayable image
-        let newFrame = CIImage(cvPixelBuffer: transformed_buff_ptr.pointee!)
+        let newFrame = CIImage(cvPixelBuffer: resultImageBuffer.pointee!)
         let context = CIContext(options: nil)
         let cgImage = context.createCGImage(
             newFrame,
@@ -188,8 +188,9 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             cgImage: cgImage,
             size: CGSize(width: width, height: height)
         )
-        DispatchQueue.main.async {
-            self.loadResultImg(image: self._resultImage)
+        DispatchQueue.main.sync {
+//            self.loadResultImg(image: self._resultImage)
+            self.resultView.layer!.contents = self._resultImage
         }
         
     }
