@@ -691,21 +691,35 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqy-f8-9U8">
-                        <rect key="frame" x="0.0" y="0.0" width="318" height="420"/>
+                        <rect key="frame" x="0.0" y="0.0" width="318" height="360"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="J6d-lB-gLc"/>
                     </imageView>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nST-Fd-l1o">
-                        <rect key="frame" x="318" y="0.0" width="323" height="420"/>
+                        <rect key="frame" x="318" y="0.0" width="323" height="360"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" heightSizable="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="kEs-93-r10"/>
                     </imageView>
+                    <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="tnb-Nw-GtE">
+                        <rect key="frame" x="18" y="376" width="42" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </switch>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0VB-IO-qVQ">
+                        <rect key="frame" x="74" y="381" width="59" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Use GPU" id="91W-i0-tVh">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
             <point key="canvasLocation" x="-12.5" y="-139"/>
         </window>
         <viewController id="hqs-VF-6HF" customClass="CameraController" customModule="Eyes_Wide_Open" customModuleProvider="target">
             <connections>
+                <outlet property="gpuSwitch" destination="tnb-Nw-GtE" id="je4-q6-Ess"/>
                 <outlet property="resultView" destination="nST-Fd-l1o" id="qzV-RD-Uh1"/>
                 <outlet property="view" destination="gqy-f8-9U8" id="4fO-Ec-ygr"/>
             </connections>

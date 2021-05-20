@@ -17,8 +17,13 @@ kernel void inverse(
 ) {
     uint id = index;
     while (id < *N) {
-        dest_buffer[id] = src_buffer[id];
+        if (src_buffer[id] > 128) {
+            dest_buffer[id] = src_buffer[id] - 128;
+        } else {
+            dest_buffer[id] = src_buffer[id];
+        }
         id += grid_sz;
     }
+    return;
 }
 

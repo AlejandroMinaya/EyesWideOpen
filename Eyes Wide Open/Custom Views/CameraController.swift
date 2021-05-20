@@ -19,15 +19,14 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     private var videoFormat = kCVPixelFormatType_32BGRA
     private var resultImageBuffer = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
     @IBOutlet var resultView: NSImageView!
+    @IBOutlet var gpuSwitch: NSSwitch!
     
     // Variable to determine if the image processing is performed using the GPU or the CPU
-    private var _useGpu = true
     public var useGpu: Bool {
         get {
-            _useGpu
-        }
-        set {
-            _useGpu = newValue
+            DispatchQueue.main.sync {
+                gpuSwitch.state.rawValue != 0
+            }
         }
     }
     private var _resultImage = NSImage()
@@ -160,7 +159,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         // Create pointer to result buffer
         var res_ptr: UnsafeMutableRawPointer!
         
-        if (!_useGpu) {
+        if (!useGpu) {
             // Process pixel buffer
             res_ptr = UnsafeMutableRawPointer.allocate(
                 byteCount: totalBytes,
@@ -213,7 +212,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
 //            self.loadResultImg(image: self._resultImage)
             self.resultView.layer!.contents = self._resultImage
         }
-        
+        Thread.sleep(forTimeInterval: TimeInterval(1/CAMERA_FPS))
     }
     
    
