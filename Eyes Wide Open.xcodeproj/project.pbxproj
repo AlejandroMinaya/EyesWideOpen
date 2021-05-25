@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BE0BDFEF2655F91C008A5901 /* VideoFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0BDFEE2655F91C008A5901 /* VideoFilters.swift */; };
-		BE0BDFF226560DCF008A5901 /* InverseFilter.metal in Sources */ = {isa = PBXBuildFile; fileRef = BE0BDFF126560DCF008A5901 /* InverseFilter.metal */; };
+		BE0BDFF226560DCF008A5901 /* GPUVideoFilters.metal in Sources */ = {isa = PBXBuildFile; fileRef = BE0BDFF126560DCF008A5901 /* GPUVideoFilters.metal */; };
 		BE0BDFF526560FED008A5901 /* GPUVideoFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0BDFF426560FED008A5901 /* GPUVideoFilters.swift */; };
 		BE416F6726544BCC00A68EE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE416F6626544BCC00A68EE8 /* AppDelegate.swift */; };
 		BE416F6926544BD000A68EE8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE416F6826544BD000A68EE8 /* Assets.xcassets */; };
@@ -18,7 +18,7 @@
 
 /* Begin PBXFileReference section */
 		BE0BDFEE2655F91C008A5901 /* VideoFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFilters.swift; sourceTree = "<group>"; };
-		BE0BDFF126560DCF008A5901 /* InverseFilter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = InverseFilter.metal; sourceTree = "<group>"; };
+		BE0BDFF126560DCF008A5901 /* GPUVideoFilters.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GPUVideoFilters.metal; sourceTree = "<group>"; };
 		BE0BDFF426560FED008A5901 /* GPUVideoFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUVideoFilters.swift; sourceTree = "<group>"; };
 		BE416F6326544BCC00A68EE8 /* Eyes Wide Open.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Eyes Wide Open.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE416F6626544BCC00A68EE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -59,6 +59,7 @@
 		BE416F6526544BCC00A68EE8 /* Eyes Wide Open */ = {
 			isa = PBXGroup;
 			children = (
+				BE0BDFF126560DCF008A5901 /* GPUVideoFilters.metal */,
 				BEF9D4F4265452BF00C650BF /* Custom Views */,
 				BE416F6626544BCC00A68EE8 /* AppDelegate.swift */,
 				BE416F6826544BD000A68EE8 /* Assets.xcassets */,
@@ -75,7 +76,6 @@
 			isa = PBXGroup;
 			children = (
 				BEF9D4FA26545C8B00C650BF /* CameraController.swift */,
-				BE0BDFF126560DCF008A5901 /* InverseFilter.metal */,
 			);
 			path = "Custom Views";
 			sourceTree = "<group>";
@@ -152,7 +152,7 @@
 				BE0BDFEF2655F91C008A5901 /* VideoFilters.swift in Sources */,
 				BE0BDFF526560FED008A5901 /* GPUVideoFilters.swift in Sources */,
 				BEF9D4FB26545C8B00C650BF /* CameraController.swift in Sources */,
-				BE0BDFF226560DCF008A5901 /* InverseFilter.metal in Sources */,
+				BE0BDFF226560DCF008A5901 /* GPUVideoFilters.metal in Sources */,
 				BE416F6726544BCC00A68EE8 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

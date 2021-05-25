@@ -20,6 +20,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     private var resultImageBuffer = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
     @IBOutlet var resultView: NSImageView!
     @IBOutlet var gpuSwitch: NSSwitch!
+    @IBOutlet var filterDropdown: NSComboBox!
     
     // Variable to determine if the image processing is performed using the GPU or the CPU
     public var useGpu: Bool {
@@ -36,12 +37,43 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
 
     // MARK: Metal Functions Lazy Declarations
     private lazy var metalInverse: MetalSIFunction = {
-        let mtlinv = MetalSIFunction(
+        return MetalSIFunction(
             functionName: "inverse",
             gridWidth: 1024,
             blockWidth: 1024
         )
-        return mtlinv
+    }()
+    
+    private lazy var metalOrig: MetalSIFunction = {
+        return MetalSIFunction(
+            functionName: "original",
+            gridWidth: 1024,
+            blockWidth: 1024
+        )
+    }()
+    
+    private lazy var metalRed: MetalSIFunction = {
+        return MetalSIFunction(
+            functionName: "red_channel",
+            gridWidth: 1024,
+            blockWidth: 1024
+        )
+    }()
+    
+    private lazy var metalGreen: MetalSIFunction = {
+        return MetalSIFunction(
+            functionName: "green_channel",
+            gridWidth: 1024,
+            blockWidth: 1024
+        )
+    }()
+    
+    private lazy var metalBlue: MetalSIFunction = {
+        return MetalSIFunction(
+            functionName: "blue_channel",
+            gridWidth: 1024,
+            blockWidth: 1024
+        )
     }()
     
     // MARK: Setup Methods
@@ -159,7 +191,46 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         // Create pointer to result buffer
         var res_ptr: UnsafeMutableRawPointer!
         
-        if (!useGpu) {
+        var filterType = "Original"
+        DispatchQueue.main.sync {
+            filterType = filterDropdown.stringValue
+        }
+        
+        if (useGpu) {
+            switch filterType {
+            case "Inverse":
+                res_ptr = metalInverse.run(
+                    src_ptr: pixel_buf_ptr.baseAddress!,
+                    src_sz: totalBytes,
+                    problem_sz: totalBytes
+                )!
+            case "Red Channel":
+                res_ptr = metalRed.run(
+                    src_ptr: pixel_buf_ptr.baseAddress!,
+                    src_sz: totalBytes,
+                    problem_sz: totalBytes
+                )!
+            case "Green Channel":
+                res_ptr = metalGreen.run(
+                    src_ptr: pixel_buf_ptr.baseAddress!,
+                    src_sz: totalBytes,
+                    problem_sz: totalBytes
+                )!
+            case "Blue Channel":
+                res_ptr = metalBlue.run(
+                    src_ptr: pixel_buf_ptr.baseAddress!,
+                    src_sz: totalBytes,
+                    problem_sz: totalBytes
+                )!
+            default:
+                // Apply no filters
+                res_ptr = metalOrig.run(
+                    src_ptr: pixel_buf_ptr.baseAddress!,
+                    src_sz: totalBytes,
+                    problem_sz: totalBytes
+                )!
+            }
+        } else {
             // Process pixel buffer
             res_ptr = UnsafeMutableRawPointer.allocate(
                 byteCount: totalBytes,
@@ -167,13 +238,6 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             )
             defer { res_ptr.deallocate() }
             inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
-            
-        } else {
-            res_ptr = metalInverse.run(
-                src_ptr: pixel_buf_ptr.baseAddress!,
-                src_sz: totalBytes,
-                problem_sz: totalBytes
-            )!
         }
         
         // Create modified pixel buffer from bytes

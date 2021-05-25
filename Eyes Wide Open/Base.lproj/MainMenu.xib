@@ -701,13 +701,38 @@
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="kEs-93-r10"/>
                     </imageView>
                     <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" baseWritingDirection="leftToRight" alignment="left" state="on" translatesAutoresizingMaskIntoConstraints="NO" id="tnb-Nw-GtE">
-                        <rect key="frame" x="18" y="376" width="42" height="25"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <rect key="frame" x="581" y="374" width="42" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     </switch>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0VB-IO-qVQ">
-                        <rect key="frame" x="74" y="381" width="59" height="16"/>
+                    <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9H2-ml-c2S">
+                        <rect key="frame" x="65" y="375" width="256" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Use GPU" id="91W-i0-tVh">
+                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="-- Choose a filter --" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="cQh-pZ-wbk">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <objectValues>
+                                <string>Original</string>
+                                <string>Inverse</string>
+                                <string>Red Channel</string>
+                                <string>Green Channel</string>
+                                <string>Blue Channel</string>
+                            </objectValues>
+                        </comboBoxCell>
+                    </comboBox>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HL7-Ug-ji5">
+                        <rect key="frame" x="20" y="380" width="39" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Filter:" id="s4p-YE-6GV">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0VB-IO-qVQ">
+                        <rect key="frame" x="391" y="379" width="186" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Hardware Acceleration (GPU):" id="91W-i0-tVh">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -719,10 +744,21 @@
         </window>
         <viewController id="hqs-VF-6HF" customClass="CameraController" customModule="Eyes_Wide_Open" customModuleProvider="target">
             <connections>
+                <outlet property="filterDropdown" destination="9H2-ml-c2S" id="Qo9-9b-OXs"/>
                 <outlet property="gpuSwitch" destination="tnb-Nw-GtE" id="je4-q6-Ess"/>
                 <outlet property="resultView" destination="nST-Fd-l1o" id="qzV-RD-Uh1"/>
                 <outlet property="view" destination="gqy-f8-9U8" id="4fO-Ec-ygr"/>
             </connections>
         </viewController>
+        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Lwk-CY-981">
+            <rect key="frame" x="0.0" y="0.0" width="37" height="16"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="1le-7d-QS0">
+                <font key="font" usesAppearanceFont="YES"/>
+                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+            </textFieldCell>
+            <point key="canvasLocation" x="-45" y="-453"/>
+        </textField>
     </objects>
 </document>
