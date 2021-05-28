@@ -18,9 +18,12 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     private var videoOutput = AVCaptureVideoDataOutput()
     private var videoFormat = kCVPixelFormatType_32BGRA
     private var resultImageBuffer = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
+    private var handledFrame = 0
+    private var avgProcessTime = 0.0
     @IBOutlet var resultView: NSImageView!
     @IBOutlet var gpuSwitch: NSSwitch!
     @IBOutlet var filterDropdown: NSComboBox!
+    @IBOutlet var avgTextView: NSTextField!
     
     // Variable to determine if the image processing is performed using the GPU or the CPU
     public var useGpu: Bool {
@@ -116,6 +119,10 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
     override func viewWillDisappear() {
         self.turnOff()
     }
+    @IBAction func clearStatistics(_: NSView) {
+            handledFrame = 0
+            avgProcessTime = 0
+    }
     
     // MARK: Camera Management Methods
     public func plugCamera() {
@@ -165,7 +172,19 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             debugPrint("Couldn't retrieve buffer image")
             return
         }
+        if (handledFrame == CAMERA_FPS) {
+            avgProcessTime =  avgProcessTime / Double(CAMERA_FPS)
+            handledFrame = 0
+            DispatchQueue.main.sync {
+                avgTextView.stringValue = "Avg. time last \(CAMERA_FPS) frames: \(avgProcessTime)s"
+            }
+        }
+        let start = CFAbsoluteTimeGetCurrent()
         self.handleFrame(frame: frame)
+        let end = CFAbsoluteTimeGetCurrent()
+        
+        avgProcessTime += Double(end - start)
+        handledFrame += 1
     }
     
     private func handleFrame(frame: CVImageBuffer) {
@@ -285,7 +304,6 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             size: CGSize(width: width, height: height)
         )
         DispatchQueue.main.sync {
-//            self.loadResultImg(image: self._resultImage)
             self.resultView.layer!.contents = self._resultImage
         }
         Thread.sleep(forTimeInterval: TimeInterval(1/CAMERA_FPS))
