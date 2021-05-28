@@ -237,7 +237,19 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
                 alignment: MemoryLayout<UInt8>.alignment
             )
             defer { res_ptr.deallocate() }
-            inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
+            switch filterType {
+            case "Inverse":
+                inverseBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
+            case "Red Channel":
+                redChannelBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
+            case "Green Channel":
+                greenChannelBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
+            case "Blue Channel":
+                blueChannelBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
+            default:
+                originalBGRA(src_ptr: pixel_buf_ptr, dst_ptr: res_ptr)
+            }
+            
         }
         
         // Create modified pixel buffer from bytes
