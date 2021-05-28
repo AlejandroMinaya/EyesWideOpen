@@ -172,8 +172,8 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
             debugPrint("Couldn't retrieve buffer image")
             return
         }
-        if (handledFrame >= 0) {
-            avgProcessTime =  avgProcessTime / Double(1)
+        if (handledFrame == CAMERA_FPS) {
+            avgProcessTime =  avgProcessTime / Double(CAMERA_FPS)
             handledFrame = 0
             DispatchQueue.main.sync {
                 avgTextView.stringValue = "Avg. time last \(CAMERA_FPS) frames: \(avgProcessTime)s"
@@ -186,7 +186,7 @@ class CameraController: NSViewController, AVCaptureVideoDataOutputSampleBufferDe
         self.handleFrame(frame: frame)
         let end = CFAbsoluteTimeGetCurrent()
         
-        avgProcessTime = Double(end - start)
+        avgProcessTime += Double(end - start)
         handledFrame += 1
     }
     
